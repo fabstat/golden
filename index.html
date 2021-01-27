@@ -1,0 +1,262 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>State-space modelling of the flight behaviour of a soaring bird provides new insights to migratory strategies</title>
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+	<section data-background-image="img/frigate.jpg" data-background-opacity=".4">
+	  <h4>State-space modelling of the flight behaviour of a soaring bird provides new insights to migratory strategies</h4>
+	  <small>Enrico Pirotta | Todd Katzner | Tricia A. Miller | Adam E. Duerr | <br> Melissa A. Braham | Leslie New</small>
+	</section>
+	<section data-background-image="img/frigate.jpg" data-background-opacity=".4">
+	  <h4>Presentation Sections</h4>
+	  <ol>
+	    <li class="fragment">About the Authors</li>
+	    <li class="fragment">Why this Paper?</li>
+	    <li class="fragment">Animal Movement and Behavior</li>
+	    <li class="fragment">Bayesian State-Space Models</li>
+	    <li class="fragment">Let the Eagle Soar: Understanding Golden Eagle Behavior</li>
+	    <li class="fragment">Results and Conclusion</li>
+	  </ol>
+	</section>
+	<section>
+	   <h4>Authors:</h4>
+	  <section data-background-image="img/stats.jpg" data-background-opacity=".3">	   
+	    <ul>
+	      <li>Statisticians:</li>
+	      <ul>
+	      <li class="fragment">Dr. Enrico Pirotta: Research Assistant Professor of Statistics at WSU specializing in stochastic dynamic programming models of blue whale movements.</li>
+	      <li class="fragment">Dr. Leslie New: Assistant Professor of Statistics at WSU specializing in hierarchical Bayesian state-space models and their applications to ecological problems.</li>
+	      </ul>
+	    </ul>
+	    </section>
+	    <section data-background-image="img/trish.jpg" data-background-opacity=".3">
+	    <ul>
+	      <li>Bird Experts:</li>
+	      <ul>
+		<li class="fragment">Dr. Todd Katzner: wildlife biologist at USGS focuses on developement of GPS-GSM telemetry systems for tracking migratory birds.</li>
+		<li class="fragment">Dr. Tricia Miller: wildlife biologist at Conservation Science Global (CSG) focusing on the movement ecology and conservation of raptors.</li>
+		<li class="fragment">Dr. Adam Duerr: wildlife biologist at CSG researching flight behavior of golden and bald eagles.</li>
+		  <li class="fragment">Missy Braham, M.Sc.: director of data science at CSG.</li>
+		</ul>
+	      </ul>
+	    </section>
+	</section>
+	  <section data-background-image="img/bald.jpg" data-background-opacity=".3">
+	    <h4>Why this Paper?</h4>
+	    <p>My research will expand on Dr. Pirotta model via the addition of a hierarchical structure in order to study the ontogeny of bald eagle movement.</p>
+	  </section>
+	  <section data-background-image="img/fight.jpg" data-background-opacity=".3">
+	    <h4>Motivation</h4>
+	    <ul>
+	      <li class="fragment">Animal behavior is often difficult to observe directly.</li>
+	      <li class="fragment">Telemetry data provide observations of an animal's position and velocity.</li>
+	      <li class="fragment">Statistical analyses of these data allow us to infer animal behavior based on their movements.</li>
+	      <li class="fragment">Understading animal behavior helps conservation policy implementation.</li>
+	    </ul>
+	    
+	  </section>
+	  <section>
+	    
+	    <section data-transition="fade-out">
+	      <h4>State-Space Models (SSM)</h4>
+	    Given a sequence of observations, a SSM assumes that there is a <span class="fragment highlight-red">hidden process</span> behind them. Each observation at a given time is emitted via some  <span class="fragment highlight-red">distribution given a hidden state</span>, and the observations are independent of each other. The hidden process has the  <span class="fragment highlight-red">Markov property</span>, i.e. the state at time $t$ only depends on the state at time $t-1$.
+	  </section>
+	    <section data-transition="fade-in">
+	      <h4>Also Called a Hidden Markov Model (HMM)</h4>
+	    <p><img src="img/hmm.png" width="800px"></p>
+	  </section>
+	    <section>
+	      <h4>Definition</h4>
+	      The discrete-time finite state HMM is completely defined as follows:
+	      <ol>
+<li class="fragment">Number of states, $K$, i.e. latent patterns of interest.</li>
+<li class="fragment">Transition probability matrix $\Gamma$, for the hidden states $X$:
+$P(X_t = j | X_{t-1} = i)$ for $i,j \in \{1, \dots, K\}$.</li>
+<li class="fragment">State-dependent distributions for the observations $Y$ that stem from the latent states: $f(Y_t|X_t = k) \Rightarrow$ any valid distribution function.</li>
+<li class="fragment">Initial state distribution, $\delta$, i.e. the first pattern exhibited: $P(X_1 = k)$.</li>
+</ol>
+	    </section>
+	    <section>
+	      <h4>Likelihoods</h4>
+	      <ul>
+		<li class="fragment"> Complete-data likelihood:
+		  $$f(\mathbf{y, x}) = \mathcal{L}_c = \delta_{x_1}\prod\limits_{t=2}^T\gamma_{x_{t-1}, x_t}\prod\limits_{t=1}^Tf_{x_t}(y_t).$$</li>
+		<li class="fragment"> Marginal likelihood:
+		  $$\mathcal{L}_m = \sum\limits_{x_1 = 1}^N \cdots \sum\limits_{x_T=1}^N\delta_{x_1}\prod\limits_{t=2}^T\gamma_{x_{t-1}, x_t}\prod\limits_{t=1}^Tf_{x_t}(y_t).$$</li>
+		</ul>
+	    </section>
+	    <section data-background-image="img/prior.jpg" data-background-opacity=".3">
+	      <h4>Priors</h4>
+	      <p>Since we are taking a Bayesian approach, we will need some priors. HMMs have three main sets of parameters for which we can specify prior distributions. Parameters pertaining to:</p>
+	      <ol>
+		<li class="fragment">state dependent distributions,</li>
+		<li class="fragment">the initial state distribution, and </li>
+		<li class="fragment">transition probabilities.</li>
+		</ol>
+	      </section>
+	  </section>
+	<section>
+	  <section data-background-image="img/goldenrock.jpg" data-background-opacity=".3">
+	    <h4>Golden Eagle Data</h4>
+	    <ul>
+	      <li class="fragment">Lon, lat, and alt above sea level from 2009 to 2016.</li>
+	      <li class="fragment">Every 30-60 seconds from sunrise to sunset.</li>
+	      <li class="fragment">58 tracks: 48 spring, 10 autumn; 8 juveniles, 22 subadults, 28 adults; 19 females, 39 males.</li>
+	      <li class="fragment">Dataset was cleaned and regularized to 1 minute time steps (response variables were linearly interpolated).</li>
+	      <li class="fragment">4 variables at each time $t$: step length, turning angle, altitude above sea leavel and hierarchical slope position.</li>
+	    </ul>
+	     
+	  </section>
+	  <section  data-background-image="img/welcome.jpg" data-background-opacity=".3">
+	    <h4>Tracking Eagles</h4>
+	   <p class="fragment"><img src="img/tracks.jpg" width="700px"></p>
+	  </section>
+	  <section>
+	    <h4>State-Dependent Distributions</h4>
+	    <ol>
+	      <li class="fragment">Step lenght: $l_t | X_t = i \sim \mathrm{Weibull}(\beta_i, \alpha_i)$.</li>
+	      <li class="fragment">Turning angle: $\theta_t | X_t = i \sim w\mathrm{Cauchy}(\mu = 0, \rho_i)$.</li>
+	      <li class="fragment">Altitude: $\nu_t | X_t = i \sim \mathcal{N}(\nu_{t-1} + \pi_i,\sigma_i)$, and to account for measurement errors $a_t \sim \mathcal{N}(\nu_t, \epsilon = 25)$.</li>
+	      <li class="fragment">Hierarchical Slope Position: $h_t | X_t = i \sim \mathcal{N}(\kappa_i, \omega_i)$.</li>
+	      </ol>
+	  </section>
+	  <section data-background-image="img/soaringmodes.jpg" data-background-opacity=".2" data-transition="fade-out">
+	    <h4>Number of States</h4>
+	    <p>In unsurpervised inference, the number of states is driven by the process generating the observed data.</p>
+	    <p class="fragment">By choosing appropriate movement and environmental variables, we can identify biologically meaningful hidden states.</p>
+	    <p class="fragment">A model with 5 states converged and lined-up with biological expectations: directed thermal soaring (state 1), gliding (state 2), convoluted thermal soaring (state 3), perching (state 4) and orographic soaring (state 5).</p>
+	  </section>
+	  <section data-background-image="img/soaringmodes.jpg" data-background-opacity=".2" data-transition="fade-in">
+	    <p><img src="img/sddistros.png" width="500px"></p>
+	  </section>
+	  <section>
+	    <h4>Initial Distribution and State Transition Probabilities</h4>
+	    <p>The initial state distribution $\delta_{x_1}$, as well as the transition probabilties $\gamma_{x_{t-1}, x_t}$ from state $X_{t-1} = i$ to all states $X_t = j = 1,\dots, 5$, were assigned the prior Dirichilet$(1,1,1,1,1)$.</p>
+	  </section>
+	  <section>
+	    <h4>Model Fit and Validation</h4>
+	    <ul>
+	      <li>Model was specified in JAGS via the R package rjags, and convergence was evaluated using the R package coda.</li>
+	      <li class="fragment">Convergence of three parallel chains was assessed by monitoring the proportion of minutes spent in each state, and confirmed by an $\hat{R}$ close to 1 (<a href="sources/results.pdf" target="_blank">see results</a>).</li>
+	      <li class="fragment">Posterior state classifications where compared to manual classification (<a href="sources/confusion.pdf" target="_blank">confusion matrix</a>) and goodness of fit was assessed via <a href="sources/ppchecks.pdf" target="_blank">posterior predictive checks</a>.</li>
+	      </ul>
+	  </section>
+	  <section data-background-image="img/goldenbabies.jpg" data-background-opacity=".3">
+	    <h4>Behavioral Models</h4>
+	    <p>Upon obtaining the the behavioral modes from the SSM, the authors used the lme4 package in R to fit various <a href="sources/glms.pdf" target="_blank">binomial mixed-effect models</a> in order to indentify differences in the proportion of modes given age and season. Only flight modes were considered. Individual and year were included as random factors.</p>
+	    </section>
+	</section>
+	<section>
+	  <h4>Results</h4>
+	  <section data-transition="fade-out">
+	    <img src="img/segments.jpg" width="700px">
+	  </section>
+	  <section data-transition="fade-in">
+	    <img src="img/alts.png" width="700px">
+	  </section>
+	  <section data-transition="fade-in">
+	    <table>
+	      <tr>
+		<th>(in %)</th>
+		<th>DTS</th>
+		<th>Gliding</th>
+		<th>CTS</th>
+		<th>Perching</th>
+		<th>OS</th>
+	      </tr>
+	      <tr>
+		<td>Overall</td>
+		<td>2</td>
+		<td>31</td>
+		<td>38</td>
+		<td>9</td>
+		<td>20</td>
+	      </tr>
+	      <tr>
+		<td>Spring</td>
+		<td>3</td>
+		<td>32</td>
+		<td>37</td>
+		<td>10</td>
+		<td>18</td>
+	      </tr>
+	      <tr>
+		<td>Autumn</td>
+		<td>0</td>
+		<td>24</td>
+		<td>43</td>
+		<td>8</td>
+		<td>25</td>
+	      </tr>
+	    </table>
+	  </section>
+	  <section data-transition="fade-in">
+	    <img src="img/behavior.jpg" width="600px">
+	  </section>
+	</section>
+	<section>
+	  <section data-background-video="img/soaring.mp4" data-background-opacity=".3">
+	    <h4>Conclusion</h4>
+	    <ul>
+	      <li class="fragment">The model presented here is the first example of a state-space model for bird flight that uses altitude together with horizontal locations.</li>
+	      <li class="fragment">Using an unsupervised technique, their model identified five functional behavior modes from the observed data, including a previously unknown behavior mode.</li>
+	      <li class="fragment">Understanding the flight behavior of migrating birds can inform conservation managers and shape policies for the distribution of renewable energy equipment.</li>
+	      </ul>
+	    </section>
+	<section data-background-image="img/goldensnow.jpg" data-background-opacity=".3">
+	  <h4>Learn More!</h4>
+	  <ol>
+	    <li><a href="sources/hmm.pdf" target="_blank">Hidden Markov Models Fundamentals</a></li>
+	    <li><a href="https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/1365-2435.13180" target="_blank">Read the paper</a></li>
+	    <li><a href="https://onlinelibrary.wiley.com/doi/pdfdirect/10.1111/ele.13610" target="_blank">Uncover more ecological state dynamics with HMMs</a></li>
+	    <li>Definitely <a href="https://intro2r.com/" target="_blank">learn R</a> and maybe <a href="sources/jags.pdf" target="_blank">learn JAGS</a></li>
+	</section>
+	</section>
+      </div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependencies
+      Reveal.initialize({
+      autoPlayMedia: true,
+      math: {
+      mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+      config: 'TeX-AMS_HTML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
+      },
+      dependencies: [
+      { src: 'plugin/markdown/marked.js' },
+      { src: 'plugin/markdown/markdown.js' },
+      { src: 'plugin/notes/notes.js', async: true },
+      { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/math/math.js', async: true }
+      ]
+      });
+    </script>
+  </body>
+</html>
